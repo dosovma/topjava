@@ -36,23 +36,22 @@
 <h3><a href="index.html">Home</a></h3>
 <hr>
 <h2>Meals</h2>
-<c:set var="list" value="${meals}"/>
 <table>
     <tr>
         <th>Date</th>
         <th>Description</th>
         <th>Calories</th>
     </tr>
-    <c:forEach items="${list}" var="meal">
+    <c:forEach items="${meals}" var="meal">
         <tr class="${meal.isExcess() ? 'red' : 'green'}">
             <td>
                 <javatime:format value="${meal.getDateTime()}" pattern="yyyy-MM-dd HH:mm"/>
             </td>
             <td>
-                <c:out value="${meal.getDescription()}"/>
+                ${meal.getDescription()}
             </td>
             <td>
-                <c:out value="${meal.getCalories()}"/>
+                ${meal.getCalories()}
             </td>
         </tr>
     </c:forEach>
