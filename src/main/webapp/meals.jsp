@@ -29,11 +29,14 @@
 <h3><a href="index.html">Home</a></h3>
 <hr>
 <h2>Meals</h2>
+<a href="meals?action=add"/>Add meal</a><br>
 <table>
     <tr>
         <th>Date</th>
         <th>Description</th>
         <th>Calories</th>
+        <th></th>
+        <th></th>
     </tr>
     <c:forEach items="${meals}" var="meal">
         <tr class="${meal.excess ? 'red' : 'green'}">
@@ -41,10 +44,16 @@
                 <javatime:format value="${meal.dateTime}" pattern="yyyy-MM-dd HH:mm"/>
             </td>
             <td>
-                ${meal.description}
+                    ${meal.description}
             </td>
             <td>
-                ${meal.calories}
+                    ${meal.calories}
+            </td>
+            <td>
+                <a href="meals?action=edit&id=<c:out value="${meal.id}"/>">Update</a>
+            </td>
+            <td>
+                <a href="meals?action=delete&id=<c:out value="${meal.id}"/>">Delete</a>
             </td>
         </tr>
     </c:forEach>

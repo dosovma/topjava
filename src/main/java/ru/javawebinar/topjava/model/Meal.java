@@ -6,19 +6,28 @@ import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Meal {
+    private static final AtomicLong counter = new AtomicLong(0);
+
     private final LocalDateTime dateTime;
 
     private final String description;
 
     private final int calories;
 
-    private AtomicLong id = new AtomicLong(1);
+    private long id;
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
-        id.incrementAndGet();
+        id = counter.incrementAndGet();
+    }
+
+    public Meal(long id, LocalDateTime dateTime, String description, int calories) {
+        this.dateTime = dateTime;
+        this.description = description;
+        this.calories = calories;
+        this.id = id;
     }
 
     public LocalDateTime getDateTime() {
@@ -42,6 +51,6 @@ public class Meal {
     }
 
     public Long getId() {
-        return id.get();
+        return id;
     }
 }
