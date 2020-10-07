@@ -23,10 +23,7 @@ public class MealsUtil {
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
     );
 
-    public static int caloriesPerDay = 2005;
-
-    public static List<MealTo> mealToList =
-            filteredByStreams(mealsList, LocalTime.of(0,0,0), LocalTime.of(23,59,59), caloriesPerDay);
+    public static final int caloriesPerDay = 2005;
 
     public static void main(String[] args) {
         List<Meal> meals = Arrays.asList(

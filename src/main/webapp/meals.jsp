@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Mikle
-  Date: 06.10.2020
-  Time: 19:31
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
@@ -43,15 +36,15 @@
         <th>Calories</th>
     </tr>
     <c:forEach items="${meals}" var="meal">
-        <tr class="${meal.isExcess() ? 'red' : 'green'}">
+        <tr class="${meal.excess ? 'red' : 'green'}">
             <td>
-                <javatime:format value="${meal.getDateTime()}" pattern="yyyy-MM-dd HH:mm"/>
+                <javatime:format value="${meal.dateTime}" pattern="yyyy-MM-dd HH:mm"/>
             </td>
             <td>
-                ${meal.getDescription()}
+                ${meal.description}
             </td>
             <td>
-                ${meal.getCalories()}
+                ${meal.calories}
             </td>
         </tr>
     </c:forEach>
