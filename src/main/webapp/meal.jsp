@@ -44,6 +44,7 @@
     </table>
     <input type="hidden" name="id" value="${id}">
     <button type="submit">Save</button>
+    <button onclick="window.history.back()">Cancel</button>
 </form>
 </body>
 </html>

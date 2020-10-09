@@ -37,6 +37,7 @@ public class MealServlet extends HttpServlet {
                 dao.delete(id);
                 forward = LIST_MEAL;
                 request.setAttribute("meals", MealsUtil.filteredByStreams(dao.getMeals(), LocalTime.MIN, LocalTime.MAX, MealsUtil.caloriesPerDay));
+                //response.sendRedirect("/meals");
             } else if (action.equalsIgnoreCase("edit")) {
                 forward = INSERT_OR_EDIT;
                 long id = Long.parseLong(request.getParameter("id"));
@@ -62,6 +63,8 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.debug("get POST request");
+
+        req.setCharacterEncoding("UTF-8");
 
         String dateTimeStr = req.getParameter("dateTime");
         LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, formatter);
