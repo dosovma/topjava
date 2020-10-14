@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.ValidationUtil.*;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
 public class MealService {
@@ -19,29 +19,27 @@ public class MealService {
         this.repository = repository;
     }
 
-    public Meal create(Meal meal, Integer userId) {
-        checkNew(meal);
+    public Meal create(Meal meal, int userId) {
         return repository.save(meal, userId);
     }
 
-    public void delete(int id, Integer userId) {
+    public void delete(int id, int userId) {
         checkNotFoundWithId(repository.delete(id, userId), id);
     }
 
-    public Meal get(int id, Integer userId) {
+    public Meal get(int id, int userId) {
         return checkNotFoundWithId(repository.get(id, userId), id);
     }
 
-    public List<Meal> getAll(Integer userId) {
+    public List<Meal> getAll(int userId) {
         return repository.getAll(userId);
     }
 
-    public List<Meal> getAllByFilter(Integer userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+    public List<Meal> getAllByFilter(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         return repository.getAllByFilter(userId, startDate, endDate, startTime, endTime);
     }
 
-    public void update(Meal meal, int mealId, Integer userId) {
-        assureIdConsistent(meal, mealId);
+    public void update(Meal meal, int userId) {
         checkNotFoundWithId(repository.save(meal, userId), meal.getId());
     }
 

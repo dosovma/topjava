@@ -20,6 +20,21 @@
 <section>
     <h3><a href="index.html">Home</a></h3>
     <hr/>
+    <form action="meals" method="get">
+        <table border="0" cellpadding="8" cellspacing="0">
+            <tr>
+                <td>Дата от <input name="dateStart" type="date" value="${requestScope.dateStart}"></td>
+                <td>Время от <input name="timeStart" type="time" value="${requestScope.timeStart}"></td>
+            </tr>
+            <tr>
+                <td>Дата до <input name="dateEnd" type="date" value="${requestScope.dateEnd}"></td>
+                <td>Время до  <input name="timeEnd" type="time" value="${requestScope.timeEnd}"></td>
+            </tr>
+            <tr>
+                <td><button type="submit">Отфильтровать</button></td>
+            </tr>
+        </table>
+    </form>
     <h2>Meals</h2>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
