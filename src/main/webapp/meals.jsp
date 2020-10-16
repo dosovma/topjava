@@ -21,6 +21,7 @@
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <form action="meals" method="get">
+        <input type="hidden" name="action" value="filter">
         <table border="0" cellpadding="8" cellspacing="0">
             <tr>
                 <td>Дата от <input name="dateStart" type="date" value="${requestScope.dateStart}"></td>

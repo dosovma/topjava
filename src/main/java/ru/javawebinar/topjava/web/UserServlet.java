@@ -20,7 +20,7 @@ public class UserServlet extends HttpServlet {
         if (selectedUser != null) {
             SecurityUtil.setAuthUserId(Integer.parseInt(selectedUser));
             log.debug("set authUserId {}", selectedUser);
-            response.sendRedirect("index.html");
+            response.sendRedirect("meals");
         } else {
             request.getRequestDispatcher("/users.jsp").forward(request, response);
         }

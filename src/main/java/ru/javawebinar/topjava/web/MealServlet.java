@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
@@ -24,11 +25,12 @@ public class MealServlet extends HttpServlet {
 
     private MealRestController mealRestController;
 
-    private ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+    private ConfigurableApplicationContext appCtx;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
         mealRestController = appCtx.getBean(MealRestController.class);
     }
 
@@ -40,8 +42,7 @@ public class MealServlet extends HttpServlet {
         Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
-                Integer.parseInt(request.getParameter("calories")),
-                SecurityUtil.getAuthUserId());
+                Integer.parseInt(request.getParameter("calories")));
 
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
         if (meal.isNew()) {
@@ -55,9 +56,8 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        String dateStart = request.getParameter("dateStart");
 
-        switch (action != null ? action : (dateStart == null ? "all" : "filter")) {
+        switch (action == null ? "all" : action) {
             case "delete":
                 int id = getId(request);
                 log.info("Delete {}", id);
@@ -67,24 +67,16 @@ public class MealServlet extends HttpServlet {
             case "create":
             case "update":
                 final Meal meal = "create".equals(action) ?
-                        new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000, SecurityUtil.getAuthUserId()) :
+                        new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
                         mealRestController.get(getId(request));
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
             case "filter":
-                log.info("getAll by filter");
-                String dateEnd = request.getParameter("dateEnd");
-                String timeStart = request.getParameter("timeStart");
-                String timeEnd = request.getParameter("timeEnd");
-                request.setAttribute("dateStart", dateStart);
-                request.setAttribute("dateEnd", dateEnd);
-                request.setAttribute("timeStart", timeStart);
-                request.setAttribute("timeEnd", timeEnd);
-                LocalDate dStart = dateStart.isEmpty() ? LocalDate.MIN : LocalDate.parse(dateStart);
-                LocalDate dEnd = dateEnd.isEmpty() ? LocalDate.MAX : LocalDate.parse(dateEnd);
-                LocalTime tStart = timeStart.isEmpty() ? LocalTime.MIN : LocalTime.parse(timeStart);
-                LocalTime tEnd = timeEnd.isEmpty() ? LocalTime.MAX : LocalTime.parse(timeEnd);
+                LocalDate dStart = request.getParameter("dateStart").isEmpty() ? null : LocalDate.parse(request.getParameter("dateStart"), DateTimeFormatter.ISO_LOCAL_DATE);
+                LocalDate dEnd = request.getParameter("dateEnd").isEmpty() ? null : LocalDate.parse(request.getParameter("dateEnd"), DateTimeFormatter.ISO_LOCAL_DATE);
+                LocalTime tStart = request.getParameter("timeStart").isEmpty() ? null : LocalTime.parse(request.getParameter("timeStart"), DateTimeFormatter.ofPattern("HH:mm"));
+                LocalTime tEnd = request.getParameter("timeEnd").isEmpty() ? null : LocalTime.parse(request.getParameter("timeEnd"), DateTimeFormatter.ofPattern("HH:mm"));
                 request.setAttribute("meals", mealRestController.getAllByFiltered(dStart, dEnd, tStart, tEnd));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
             case "all":
@@ -103,7 +95,6 @@ public class MealServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-        super.destroy();
         appCtx.close();
     }
 }
