@@ -1,6 +1,9 @@
-DELETE FROM user_roles;
-DELETE FROM users;
-DELETE FROM meals;
+DELETE
+FROM user_roles;
+DELETE
+FROM users;
+DELETE
+FROM meals;
 ALTER SEQUENCE global_seq RESTART WITH 100000;
 
 INSERT INTO users (name, email, password)
@@ -19,7 +22,7 @@ VALUES (100000, timestamp '2020-10-19 10:00', 'Завтрак', 500),
        (100000, timestamp '2020-10-20 10:00', 'Завтрак', 1000),
        (100000, timestamp '2020-10-20 13:00', 'Обед', 500),
        (100000, timestamp '2020-10-20 20:00', 'Обед', 410),
-       (100000, timestamp '2020-10-19 19:30', 'Завтрак', 500),
+       (100000, timestamp '2020-10-19 10:30', 'Завтрак', 500),
        (100001, timestamp '2020-10-19 10:00', 'Завтрак', 500),
        (100001, timestamp '2020-10-19 13:00', 'Обед', 1000),
        (100001, timestamp '2020-10-19 20:00', 'Ужин', 500),
