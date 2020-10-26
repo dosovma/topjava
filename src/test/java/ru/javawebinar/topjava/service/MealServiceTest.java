@@ -34,14 +34,13 @@ public class MealServiceTest {
 
     @Test
     public void create() {
-        Meal newMeal = getNew();
-        Meal mealDB = service.create(newMeal, USER_ID);
+        Meal mealDB = service.create(getNew(), USER_ID);
         int newId = mealDB.getId();
+        Meal newMeal = getNew();
         newMeal.setId(newId);
 
         assertThat(mealDB).usingRecursiveComparison().ignoringFields("id").isEqualTo(getNew());
         assertThat(service.get(newId, USER_ID)).usingRecursiveComparison().ignoringFields("id").isEqualTo(getNew());
-//        assertEquals(service.get(newId, USER_ID), newMeal);
     }
 
     @Test
@@ -81,17 +80,14 @@ public class MealServiceTest {
     @Test
     public void getBetweenInclusiveNull() {
         List<Meal> expected = new ArrayList<>(Arrays.asList(userMeal1, userMeal2, userMeal3, userMeal4, userMeal5, userMeal6, userMeal7, userMeal8));
-//        expected.add(userMeal1);
         expected.sort(Comparator.comparing(Meal::getDate).thenComparing(Meal::getTime).reversed());
         List<Meal> actual = service.getBetweenInclusive(null, null, USER_ID);
-//        actual.sort(Comparator.comparing(Meal::getId));
         assertEquals(expected, actual);
     }
 
     @Test
     public void getAll() {
         List<Meal> expected = new ArrayList<>(Arrays.asList(userMeal1, userMeal2, userMeal3, userMeal4, userMeal5, userMeal6, userMeal7, userMeal8));
-//        expected.add(MEAL);
         expected.sort(Comparator.comparing(Meal::getDate).thenComparing(Meal::getTime).reversed());
         List<Meal> actual = service.getAll(USER_ID);
         assertEquals(expected, actual);
