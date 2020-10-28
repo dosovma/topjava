@@ -26,14 +26,12 @@ public class JpaMealRepository implements MealRepository {
             meal.setUser(ref);
             em.persist(meal);
         } else {
-            if (em.createNamedQuery("update")
-                    .setParameter(1, meal.getDescription())
-                    .setParameter(2, meal.getCalories())
-                    .setParameter(3, meal.getDateTime())
-                    .setParameter(4, userId)
-                    .executeUpdate() == 0) {
-                return null;
-            }
+            Meal mealFromDB = em.find(Meal.class, meal.getId());
+            if (mealFromDB.getUser().getId() == userId) {
+                User ref = em.getReference(User.class, userId);
+                meal.setUser(ref);
+                return em.merge(meal);
+            } else return null;
         }
         return meal;
     }
@@ -41,7 +39,7 @@ public class JpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public boolean delete(int id, int userId) {
-        return em.createNamedQuery("delete")
+        return em.createNamedQuery(Meal.DELETE)
                 .setParameter("mID", id)
                 .setParameter("uID", userId)
                 .executeUpdate() != 0;
@@ -49,7 +47,7 @@ public class JpaMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        List<Meal> meals = em.createNamedQuery("get", Meal.class)
+        List<Meal> meals = em.createNamedQuery(Meal.GET, Meal.class)
                 .setParameter(1, id)
                 .setParameter(2, userId)
                 .getResultList();
@@ -58,14 +56,14 @@ public class JpaMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        return em.createNamedQuery("getAllSorted", Meal.class)
+        return em.createNamedQuery(Meal.ALL, Meal.class)
                 .setParameter("uID", userId)
                 .getResultList();
     }
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        return em.createNamedQuery("getAllSortedAndBounded", Meal.class)
+        return em.createNamedQuery(Meal.All_BOUNDED, Meal.class)
                 .setParameter("uID", userId)
                 .setParameter("startDateTime", startDateTime)
                 .setParameter("endDateTime", endDateTime)
