@@ -1,17 +1,20 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.AfterClass;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.junit.runners.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.javawebinar.topjava.TestRuleUtil;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -31,18 +34,42 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
 
-    @Rule
-    public TestRuleUtil testRule = TestRuleUtil.getTestRule();
+    private static final StringBuffer testResult = new StringBuffer("\r\nTest method name" +
+            "\t" +
+            "Duration\r\n");
 
-    @ClassRule
-    public static TestRuleUtil after = TestRuleUtil.getTestRule();
+    private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
+
+    //не нашел rule для измерения времени работы теста
+    //не понял, как выровнять вывод сводки в одной строке
+    @Rule
+    public TestRule testRule = new TestRule() {
+        @Override
+        public Statement apply(Statement statement, Description description) {
+            String methodName = description.getMethodName();
+            try {
+                log.info("Start test : " + methodName);
+                long startTestMethod = System.nanoTime();
+                statement.evaluate();
+                log.info("End test : " + methodName);
+                long endTestMethod = System.nanoTime();
+                long duration = endTestMethod - startTestMethod;
+                testResult.append(methodName).append("\t").append(duration).append(" ms").append("\r\n");
+                log.info(String.format("Duration of %s is %d ms", methodName, duration));
+            } catch (Throwable throwable) {
+                log.info(methodName + " threw the exception");
+                throwable.printStackTrace();
+            }
+            return statement;
+        }
+    };
 
     @Autowired
     private MealService service;
 
     @AfterClass
     public static void printResultTesting() {
-        after.print();
+        log.info(testResult.toString());
     }
 
     @Test

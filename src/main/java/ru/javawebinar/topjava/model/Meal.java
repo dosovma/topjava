@@ -2,9 +2,9 @@ package ru.javawebinar.topjava.model;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,11 +14,13 @@ import java.time.LocalTime;
         @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:mID AND m.user.id=:uID"),
         @NamedQuery(name = Meal.GET, query = "SELECT m FROM Meal m WHERE m.id=?1 AND m.user.id=?2"),
         @NamedQuery(name = Meal.ALL, query = "SELECT m FROM Meal m WHERE m.user.id=:uID ORDER BY m.dateTime DESC"),
-        @NamedQuery(name = Meal.All_BOUNDED, query = "SELECT m FROM Meal m WHERE m.user.id=:uID AND m.dateTime>=:startDateTime AND m.dateTime<:endDateTime ORDER BY m.dateTime DESC")
+        @NamedQuery(name = Meal.All_BOUNDED, query =
+                "SELECT m FROM Meal m " +
+                "WHERE m.user.id=:uID AND m.dateTime>=:startDateTime AND m.dateTime<:endDateTime " +
+                "ORDER BY m.dateTime DESC")
 })
 @Entity
 @Table(name = "meals", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx"))
-@Transactional(readOnly = true)
 public class Meal extends AbstractBaseEntity {
 
     public static final String DELETE = "Meal.delete";
@@ -26,13 +28,13 @@ public class Meal extends AbstractBaseEntity {
     public static final String ALL = "Meal.getAllSorted";
     public static final String All_BOUNDED = "Meal.getAllSortedAndBounded";
 
-
     @Column(name = "date_time", nullable = false)
     @NotNull
     private LocalDateTime dateTime;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     @Length(min = 2, max = 120)
+    @NotBlank
     private String description;
 
     @Column(name = "calories", nullable = false)
@@ -41,6 +43,7 @@ public class Meal extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @NotNull
     private User user;
 
     public Meal() {

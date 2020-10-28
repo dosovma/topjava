@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
+@Transactional(readOnly = true)
 public class JpaMealRepository implements MealRepository {
 
     @PersistenceContext
@@ -27,11 +28,13 @@ public class JpaMealRepository implements MealRepository {
             em.persist(meal);
         } else {
             Meal mealFromDB = em.find(Meal.class, meal.getId());
-            if (mealFromDB.getUser().getId() == userId) {
+            if (mealFromDB != null && mealFromDB.getUser().getId() == userId) {
                 User ref = em.getReference(User.class, userId);
                 meal.setUser(ref);
                 return em.merge(meal);
-            } else return null;
+            } else {
+                return null;
+            }
         }
         return meal;
     }
