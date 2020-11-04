@@ -1,14 +1,11 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -33,9 +30,6 @@ public abstract class AbstractServiceTest {
 
     private static final StringBuilder results = new StringBuilder();
 
-    @Autowired
-    private CacheManager cacheManager;
-
     @Rule
     // http://stackoverflow.com/questions/14892125/what-is-the-best-practice-to-determine-the-execution-time-of-the-bussiness-relev
     public final Stopwatch stopwatch = new Stopwatch() {
@@ -47,11 +41,6 @@ public abstract class AbstractServiceTest {
         }
     };
 
-    @Before
-    public void setUp() throws Exception {
-        cacheManager.getCache("users").clear();
-    }
-
     @AfterClass
     public static void printResult() {
         log.info("\n---------------------------------" +
@@ -59,5 +48,6 @@ public abstract class AbstractServiceTest {
                 "\n---------------------------------" +
                 results +
                 "\n---------------------------------");
+        results.delete(0, results.length());
     }
 }
