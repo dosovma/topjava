@@ -24,11 +24,31 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 public class MealServlet extends HttpServlet {
 
     private ConfigurableApplicationContext springContext;
+    //    private GenericXmlApplicationContext springContext;
     private MealRestController mealController;
 
+/*  First method
     @Override
     public void init() {
+        springContext = new GenericXmlApplicationContext();
+        springContext.getEnvironment().setActiveProfiles(Profiles.REPOSITORY_IMPLEMENTATION, Profiles.getActiveDbProfile());
+        springContext.load("spring/spring-app.xml", "spring/spring-db.xml");
+        springContext.refresh();
+        mealController = springContext.getBean(MealRestController.class);
+    }*/
+
+/*  Second method
+    @Override
+    public void init() {
+        System.setProperty("spring.profiles.active", Profiles.getActiveDbProfile() + ", " + Profiles.REPOSITORY_IMPLEMENTATION);
         springContext = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/spring-db.xml");
+        mealController = springContext.getBean(MealRestController.class);
+    }*/
+
+    //  Third method
+    @Override
+    public void init() {
+        springContext = new ClassPathXmlApplicationContext(new String[]{"spring/spring-app.xml", "spring/spring-db.xml"}, false);
         springContext.getEnvironment().setActiveProfiles(Profiles.getActiveDbProfile(), Profiles.REPOSITORY_IMPLEMENTATION);
         springContext.refresh();
         mealController = springContext.getBean(MealRestController.class);
