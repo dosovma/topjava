@@ -1,9 +1,11 @@
 package ru.javawebinar.topjava.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
@@ -17,6 +19,7 @@ public class UserService {
 
     private final UserRepository repository;
 
+    @Autowired
     public UserService(UserRepository repository) {
         this.repository = repository;
     }
@@ -50,5 +53,15 @@ public class UserService {
     public void update(User user) {
         Assert.notNull(user, "user must not be null");
         checkNotFoundWithId(repository.save(user), user.id());
+    }
+
+    @Cacheable("users")
+    public List<Meal> getUserMeals(int id) {
+        return repository.getUserMeals(id);
+    }
+
+    @Cacheable("users")
+    public List<Meal> getUserMealsJOIN(int id) {
+        return repository.getUserMealsJOIN(id);
     }
 }

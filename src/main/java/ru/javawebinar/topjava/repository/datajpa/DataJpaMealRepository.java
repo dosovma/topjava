@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDateTime;
@@ -50,5 +51,11 @@ public class DataJpaMealRepository implements MealRepository {
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
         return crudMealRepository.findAllByUserIdBetweenDate(startDateTime, endDateTime, userId);
+    }
+
+    @Override
+    public User getUserByMeal(int id, int userId) {
+        Meal meal = crudMealRepository.getUserByMeal(id, userId);
+        return meal == null ? null : meal.getUser();
     }
 }
