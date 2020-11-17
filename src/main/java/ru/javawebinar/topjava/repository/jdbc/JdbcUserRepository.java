@@ -47,7 +47,6 @@ public class JdbcUserRepository implements UserRepository {
                         return oldVal;
                     });
         }
-
         return List.copyOf(data.values());
     };
 
@@ -133,8 +132,7 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query(
-                """
+        return jdbcTemplate.query("""
                         SELECT * FROM users 
                         LEFT JOIN user_roles ON users.id = user_roles.user_id ORDER BY users.name, users.email
                         """,
