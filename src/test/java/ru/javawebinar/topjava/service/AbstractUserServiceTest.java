@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,7 +102,8 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void createWithException() {
-        Assume.assumeTrue(!env.acceptsProfiles(Profiles.of(ru.javawebinar.topjava.Profiles.JDBC)));
+//        First string used to HW06 basic 1.2. Commented it to do optional 2.5
+//        Assume.assumeTrue(!env.acceptsProfiles(Profiles.of(ru.javawebinar.topjava.Profiles.JDBC)));
         validateRootCause(() -> service.create(new User(null, "  ", "mail@yandex.ru", "password", Role.USER)), ConstraintViolationException.class);
         validateRootCause(() -> service.create(new User(null, "User", "  ", "password", Role.USER)), ConstraintViolationException.class);
         validateRootCause(() -> service.create(new User(null, "User", "mail@yandex.ru", "  ", Role.USER)), ConstraintViolationException.class);
