@@ -4,21 +4,19 @@
 
 <html>
 <jsp:include page="fragments/headTag.jsp"/>
-<head>
-    <title>Meal</title>
-</head>
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
     <hr>
-    <h2><c:if test="${param.size()==0}">
-        <spring:message code="mealForm.createTitle"/>
-    </c:if>
-        <c:if test="${param.size()>0}">
+    <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
+    <h2>
+        <c:if test="${meal.id == null}">
+            <spring:message code="mealForm.createTitle"/>
+        </c:if>
+        <c:if test="${meal.id != null}">
             <spring:message code="mealForm.updateTitle"/>
         </c:if>
     </h2>
-    <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
     <form method="post">
         <input type="hidden" name="id" value="${meal.id}">
         <dl>

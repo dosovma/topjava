@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.javawebinar.topjava.model.Meal;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -28,37 +27,31 @@ public class JspMealController extends AbstractMealController {
         return "redirect:/meals";
     }
 
-    @PostMapping({"create", "update"})
-    public String createUpdate(@RequestParam Map<String, String> mealParam) {
-        if (mealParam.get("id").isEmpty()) {
-            Meal meal = new Meal(
-                    LocalDateTime.parse(mealParam.get("dateTime")),
-                    mealParam.get("description"),
-                    Integer.parseInt(mealParam.get("calories")));
+    @PostMapping("*")
+    public String createUpdate(@RequestParam(required = false) Map<String, String> mealParam) {
+        Integer id = mealParam.get("id").isEmpty() ? null : Integer.parseInt(mealParam.get("id"));
+        Meal meal = new Meal(
+                id,
+                LocalDateTime.parse(mealParam.get("dateTime")),
+                mealParam.get("description"),
+                Integer.parseInt(mealParam.get("calories")));
+        if (id == null) {
             create(meal);
         } else {
-            int id = Integer.parseInt(mealParam.get("id"));
-            Meal meal = new Meal(
-                    id,
-                    LocalDateTime.parse(mealParam.get("dateTime")),
-                    mealParam.get("description"),
-                    Integer.parseInt(mealParam.get("calories")));
             update(meal, id);
         }
         return "redirect:/meals";
     }
 
-    @GetMapping({"create", "update"})
-    public String createUpdateForm(HttpServletRequest request, @RequestParam(required = false) Integer id, Model model) {
+    @GetMapping("create")
+    public String createForm(Model model) {
+        model.addAttribute("meal", new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000));
+        return "/mealForm";
+    }
 
-        String uri = request.getRequestURI();
-        if (uri.endsWith("update")) {
-            model.addAttribute("meal", get(id));
-        } else if (uri.endsWith("create")) {
-            model.addAttribute("meal", new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000));
-        } else {
-            return "/meals";
-        }
+    @GetMapping("update")
+    public String updateForm(@RequestParam Integer id, Model model) {
+        model.addAttribute("meal", get(id));
         return "/mealForm";
     }
 

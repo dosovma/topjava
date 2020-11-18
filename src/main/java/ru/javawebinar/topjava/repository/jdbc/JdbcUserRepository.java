@@ -14,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
+import ru.javawebinar.topjava.util.ValidationUtil;
 
-import javax.validation.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
@@ -31,23 +31,24 @@ public class JdbcUserRepository implements UserRepository {
         while (resultSet.next()) {
             Role role = Role.valueOf(resultSet.getString("role"));
             int id = resultSet.getInt("id");
-            data.merge(
-                    id,
-                    new User(
-                            id,
-                            resultSet.getString("name"),
-                            resultSet.getString("email"),
-                            resultSet.getString("password"),
-                            resultSet.getInt("calories_per_day"),
-                            resultSet.getBoolean("enabled"),
-                            resultSet.getDate("registered"),
-                            EnumSet.of(role)),
-                    (oldVal, newVal) -> {
-                        oldVal.getRoles().add(role);
-                        return oldVal;
-                    });
+            if (data.containsKey(id)) {
+                data.get(id).getRoles().add(role);
+            } else {
+                User user = new User(
+                        id,
+                        resultSet.getString("name"),
+                        resultSet.getString("email"),
+                        resultSet.getString("password"),
+                        resultSet.getInt("calories_per_day"),
+                        resultSet.getBoolean("enabled"),
+                        resultSet.getDate("registered"),
+                        EnumSet.of(role));
+                data.put(id, user);
+            }
         }
-        return List.copyOf(data.values());
+        List<User> userList = new LinkedList<>(data.values());
+        Collections.sort(userList, Comparator.comparing(User::getName).thenComparing(User::getEmail));
+        return userList;
     };
 
     private final JdbcTemplate jdbcTemplate;
@@ -55,9 +56,6 @@ public class JdbcUserRepository implements UserRepository {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     private final SimpleJdbcInsert insertUser;
-
-    private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    private final Validator validator = factory.getValidator();
 
     @Autowired
     public JdbcUserRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
@@ -72,10 +70,7 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     @Transactional
     public User save(User user) {
-        Set<ConstraintViolation<User>> violationSet = validator.validate(user);
-        if (violationSet.size() != 0) {
-            throw new ConstraintViolationException(violationSet);
-        }
+        ValidationUtil.validate(user);
 
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
 
@@ -85,28 +80,30 @@ public class JdbcUserRepository implements UserRepository {
         } else if (namedParameterJdbcTemplate.update("""
                    UPDATE users SET name=:name, email=:email, password=:password, 
                    registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
-                """, parameterSource) == 0) {
+                """, parameterSource) != 0) {
+            jdbcTemplate.update("DELETE FROM user_roles where user_id=?", user.getId());
+        } else {
             return null;
         }
-        updateRoles(user);
+        insertRoles(user);
         return user;
     }
 
-    private void updateRoles(User user) {
-        jdbcTemplate.update("DELETE FROM user_roles where user_id=?", user.getId());
+    private void insertRoles(User user) {
         List<Role> roleList = List.copyOf(user.getRoles());
         jdbcTemplate.batchUpdate(
-                "INSERT INTO user_roles VALUES (?,?)",
+                "INSERT INTO user_roles (user_id, role) VALUES (?,?)",
                 new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
                         preparedStatement.setInt(1, user.getId());
-                        preparedStatement.setString(2, roleList.get(i).toString());
+                        preparedStatement.setString(2, roleList.get(i).name());
                     }
 
                     @Override
                     public int getBatchSize() {
-                        return user.getRoles().size();
+                        Set<Role> roles = user.getRoles();
+                        return roles == null ? 0 : roles.size();
                     }
                 });
     }
@@ -119,14 +116,18 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User get(int id) {
-        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
+        List<User> users = jdbcTemplate.query("""
+        SELECT * FROM users LEFT JOIN user_roles ur on users.id = ur.user_id WHERE id=?
+        """, resultSetExtractor, id);
         return DataAccessUtils.singleResult(users);
     }
 
     @Override
     public User getByEmail(String email) {
 //        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
-        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
+        List<User> users = jdbcTemplate.query("""
+        SELECT * FROM users LEFT JOIN user_roles ur on users.id = ur.user_id WHERE email=?
+        """, resultSetExtractor, email);
         return DataAccessUtils.singleResult(users);
     }
 
