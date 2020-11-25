@@ -24,6 +24,17 @@
     </mvc:annotation-driven>
 
     <bean id="conversionService"
+          class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="formatters">
+            <set>
+                <!--                <bean class="ru.javawebinar.topjava.util.DateFormatter"/>
+                                <bean class="ru.javawebinar.topjava.util.TimeFormatter"/>-->
+                <bean class="ru.javawebinar.topjava.util.DateTimeFormatterFactory"/>
+            </set>
+        </property>
+    </bean>
+
+    <!--<bean id="conversionService"
           class="org.springframework.context.support.ConversionServiceFactoryBean">
         <property name="converters">
             <set>
@@ -32,7 +43,7 @@
             </set>
         </property>
     </bean>
-
+-->
     <context:component-scan base-package="ru.javawebinar.**.web"/>
 
     <!--  all resources inside folder src/main/webapp/resources are mapped so they can be referred to inside JSP files -->
