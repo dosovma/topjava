@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.web.meal;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,7 +18,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -33,34 +31,17 @@ class MealRestControllerTest extends AbstractControllerTest {
     private MealService service;
 
     @Test
-    void getById() {
-        Assertions.assertAll(
-                () -> perform(delete(REST_URL + MEAL1_ID))
-                        .andExpect(status().isUnsupportedMediaType()),
-                () -> perform(get(REST_URL + MEAL1_ID).contentType("application/json"))
-                        .andDo(print())
-                        .andExpect(status().isOk())
-                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                        .andExpect(MEAL_MATCHER.contentJson(meal1))
-        );
+    void getById() throws Exception {
+        perform(get(REST_URL + MEAL1_ID))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_MATCHER.contentJson(meal1));
     }
 
     @Test
-    void getByIdNotFound() throws Exception {
-        perform(get(REST_URL + NOT_FOUND).contentType("application/json"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void deleteById() {
-        Assertions.assertAll(
-                () -> perform(delete(REST_URL + MEAL1_ID))
-                        .andExpect(status().isUnsupportedMediaType()),
-                () -> perform(delete(REST_URL + MEAL1_ID).contentType("application/json"))
-                        .andExpect(status().isOk()),
-                () -> perform(delete(REST_URL + MEAL1_ID).contentType("application/json"))
-                        .andExpect(status().isNotFound())
-        );
+    void deleteById() throws Exception {
+        perform(delete(REST_URL + MEAL1_ID))
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -79,15 +60,6 @@ class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void createBadRequest() throws Exception {
-        Meal newMeal = MealTestData.getUpdated();
-        perform(post(REST_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newMeal)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void updateById() throws Exception {
         Meal updatedMeal = MealTestData.getUpdated();
         ResultActions action = perform(put(REST_URL + MEAL1_ID)
@@ -100,24 +72,8 @@ class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void updateNotFound() throws Exception {
-        perform(put(REST_URL + ADMIN_MEAL_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(adminMeal1)))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void updateBadRequest() throws Exception {
-        perform(put(REST_URL + ADMIN_MEAL_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(MealTestData.getUpdated())))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void getAll() throws Exception {
-        ResultActions action = perform(get(REST_URL).contentType("application/json"))
+        ResultActions action = perform(get(REST_URL))
                 .andExpect(status().isOk());
 
         List<MealTo> actual = readListFromJsonMvcResult(action.andReturn(), MealTo.class);
@@ -129,10 +85,8 @@ class MealRestControllerTest extends AbstractControllerTest {
     void getBetween() throws Exception {
         ResultActions action = perform(get(REST_URL
                 + "filter?"
-                + "startDate=2020-01-31T10:15:30&endTime=2020-01-31T20:20:30")
-                .contentType("application/json"))
-                .andExpect(status().isOk())
-                .andDo(print());
+                + "startDate=2020-01-31&endTime=20:20:30"))
+                .andExpect(status().isOk());
 
         List<MealTo> actual = readListFromJsonMvcResult(action.andReturn(), MealTo.class);
         List<MealTo> expected = MealsUtil.getTos(List.of(meal7, meal6, meal5, meal4), SecurityUtil.authUserCaloriesPerDay());
