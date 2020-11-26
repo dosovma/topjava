@@ -22,6 +22,8 @@ class RootControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("users"))
                 .andExpect(forwardedUrl("/WEB-INF/jsp/users.jsp"))
+                //работает, сравнение списков, потому что в AbstractBAseEntity переопределен equals/hashcode
+                //сравнение идет по ид и всё
                 .andExpect(model().attribute("users", List.of(admin, user)));
     }
 
