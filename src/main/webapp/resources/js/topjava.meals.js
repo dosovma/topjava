@@ -28,10 +28,31 @@ $(function () {
             "order": [
                 [
                     0,
-                    "asc"
+                    "desc"
                 ]
             ]
         })
     };
     makeEditable();
 });
+
+function clearFilter() {
+    $('#filter').find(":input").val("");
+    updateFilteredTable()
+}
+
+function updateFilteredTable() {
+    $.get(ctx.ajaxUrl + "filter/", $('#filter').serialize(), function (data) {
+        ctx.datatableApi.clear().rows.add(data).draw();
+    });
+
+    /*  В полной форме не отправляется, что бы я не делал(
+        $.ajax({
+            type: 'GET',
+            url: ctx.ajaxUrl + "filter/",
+            date: $('#filter').serialize()
+        }).done (function () {
+            updateTable();
+            successNoty("Filtered");
+        });*/
+}
