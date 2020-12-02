@@ -42,17 +42,16 @@ function clearFilter() {
 }
 
 function updateFilteredTable() {
-    $.get(ctx.ajaxUrl + "filter/", $('#filter').serialize(), function (data) {
+/*    $.get(ctx.ajaxUrl + "filter/", $('#filter').serialize(), function (data) {
         ctx.datatableApi.clear().rows.add(data).draw();
-    });
+    });*/
 
-    /*  В полной форме не отправляется, что бы я не делал(
         $.ajax({
             type: 'GET',
             url: ctx.ajaxUrl + "filter/",
-            date: $('#filter').serialize()
-        }).done (function () {
-            updateTable();
+            data: $('#filter').serialize()
+        }).done (function (data) {
+            ctx.datatableApi.clear().rows.add(data).draw();
             successNoty("Filtered");
-        });*/
+        });
 }
