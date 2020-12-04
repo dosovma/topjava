@@ -32,6 +32,7 @@
         <junit.jupiter.version>5.7.0</junit.jupiter.version>
         <assertj.version>3.17.2</assertj.version>
         <hamcrest.version>2.2</hamcrest.version>
+        <spring-security-test.version>5.4.2</spring-security-test.version>
 
         <!-- Hibernate -->
         <hibernate.version>5.4.22.Final</hibernate.version>
@@ -312,6 +313,14 @@
             <version>${assertj.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <version>${spring-security-test.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <profiles>

@@ -37,7 +37,7 @@ $(function () {
 });
 
 function clearFilter() {
-    $('#filter').find(":input").val("");
+    $('#filter').trigger("reset");
     updateFilteredTable()
 }
 
@@ -52,6 +52,17 @@ function updateFilteredTable() {
             data: $('#filter').serialize()
         }).done (function (data) {
             ctx.datatableApi.clear().rows.add(data).draw();
-            successNoty("Filtered");
         });
+}
+
+function save() {
+    $.ajax({
+        type: "POST",
+        url: ctx.ajaxUrl,
+        data: form.serialize()
+    }).done(function () {
+        $("#editRow").modal("hide");
+        updateFilteredTable();
+        successNoty("Saved");
+    });
 }

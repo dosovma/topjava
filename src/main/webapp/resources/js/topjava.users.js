@@ -43,3 +43,22 @@ $(function () {
     };
     makeEditable();
 });
+
+function changeColor(id) {
+    var enable;
+    if (document.getElementById('check_check').checked) {
+        enable = true;
+    } else {
+        enable = false;
+    }
+    $.ajax({
+        type: "GET",
+        url: "rest/admin/users/" + id + "/enabled",
+        data: {'enable':enable},
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa("admin@gmail.com:admin"));
+        },
+    }).done(function () {
+        $("#"+id).toggleClass('greenSelected');
+    });
+}
