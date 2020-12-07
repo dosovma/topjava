@@ -9,7 +9,7 @@ import ru.javawebinar.topjava.to.UserTo;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 @RestController
-    @RequestMapping(value = ProfileRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ProfileRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProfileRestController extends AbstractUserController {
     static final String REST_URL = "/rest/profile";
 
