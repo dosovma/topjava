@@ -21,6 +21,5 @@
     <script type="text/javascript" src="webjars/datatables/1.10.21/js/dataTables.bootstrap4.min.js" defer></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js" defer></script>
     <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.22/dataRender/datetime.js" defer></script>
-    <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.22/sorting/date-de.js" defer></script>
     <script type="text/javascript" src="webjars/noty/3.1.4/lib/noty.min.js" defer></script>
 </head>
