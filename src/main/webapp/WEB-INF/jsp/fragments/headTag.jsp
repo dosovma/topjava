@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="webjars/noty/3.1.4/demo/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="webjars/datatables/1.10.21/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="webjars/noty/3.1.4/lib/noty.css"/>
+    <link rel="stylesheet" type="text/css" href="webjars/datetimepicker/2.5.20-1/build/jquery.datetimepicker.min.css"/>
     <link rel="shortcut icon" href="resources/images/icon-meal.png">
 
     <%--http://stackoverflow.com/a/24070373/548473--%>
@@ -22,4 +23,5 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js" defer></script>
     <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.22/dataRender/datetime.js" defer></script>
     <script type="text/javascript" src="webjars/noty/3.1.4/lib/noty.min.js" defer></script>
+    <script src="webjars/datetimepicker/2.5.20-1/build/jquery.datetimepicker.full.min.js" defer></script>
 </head>

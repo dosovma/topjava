@@ -7,7 +7,7 @@ function makeEditable() {
     });
 
     // solve problem with cache in IE: https://stackoverflow.com/a/4303862/548473
-    $.ajaxSetup({cache: false});
+    $.ajaxSetup({ cache: false });
 }
 
 function add() {
@@ -21,6 +21,9 @@ function updateRow(id) {
     $("#modalTitle").html(i18n["editTitle"]);
     $.get(ctx.ajaxUrl + id, function (data) {
         $.each(data, function (key, value) {
+            if (key === 'dateTime') {
+                value = value.substring(0, 16).replaceAll('T', ' ');
+            }
             form.find("input[name='" + key + "']").val(value);
         });
         $('#editRow').modal();

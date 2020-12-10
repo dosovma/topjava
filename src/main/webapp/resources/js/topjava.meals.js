@@ -61,4 +61,11 @@ $(function () {
         updateTable: updateFilteredTable
     };
     makeEditable();
+    $.datetimepicker.setLocale('ru');
+    $('#datetimepicker_date_start').datetimepicker({timepicker:false, format:'Y-m-d'});
+    $('#datetimepicker_date_end').datetimepicker({timepicker:false, format:'Y-m-d'});
+    $('#datetimepicker_time_start').datetimepicker({datepicker:false, format:'H:i'});
+    $('#datetimepicker_time_end').datetimepicker({datepicker:false, format:'H:i'});
+    $('#dateTime_picker').datetimepicker({format:'Y-m-d H:i'});
+
 });

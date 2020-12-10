@@ -44,7 +44,7 @@ public class Meal extends AbstractBaseEntity implements Serializable {
     private String description;
 
     @Column(name = "calories", nullable = false)
-    @NotNull(message = "Ай-яй-яй, нельзя нулл значение")
+    @NotNull(message = "The value must be not null")
     @Range(min = 10, max = 5000)
     private Integer calories;
 
@@ -77,7 +77,7 @@ public class Meal extends AbstractBaseEntity implements Serializable {
         return description;
     }
 
-    public int getCalories() {
+    public Integer getCalories() {
         return calories;
     }
 
