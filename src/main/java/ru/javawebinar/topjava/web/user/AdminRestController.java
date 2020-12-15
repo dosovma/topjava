@@ -6,8 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.User;
@@ -27,11 +25,6 @@ public class AdminRestController extends AbstractUserController {
     @Autowired
     FormValidator formValidator;
 
-    @InitBinder
-    protected void initBinder(WebDataBinder binder) {
-        binder.setValidator(formValidator);
-    }
-
     @Override
     @GetMapping
     public List<User> getAll() {
@@ -45,7 +38,8 @@ public class AdminRestController extends AbstractUserController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createWithLocation(@Validated @RequestBody User user, BindingResult result) {
+    public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user, BindingResult result) {
+        formValidator.validate(user, result);
         if (result.hasErrors()) {
             throw new DataIntegrityViolationException(ValidationUtil.getMessage(result));
         } else {
@@ -64,11 +58,15 @@ public class AdminRestController extends AbstractUserController {
         super.delete(id);
     }
 
-    @Override
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody User user, @PathVariable int id) {
-        super.update(user, id);
+    public void update(@Valid @RequestBody User user, @PathVariable int id, BindingResult result) {
+        formValidator.validate(user, result);
+        if (result.hasErrors()) {
+            throw new DataIntegrityViolationException(ValidationUtil.getMessage(result));
+        } else {
+            super.update(user, id);
+        }
     }
 
     @Override
