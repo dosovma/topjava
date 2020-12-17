@@ -48,6 +48,7 @@ public class UserTestData {
         updated.setPassword("newPass");
         updated.setEnabled(false);
         updated.setRoles(Collections.singletonList(Role.ADMIN));
+        updated.setPassword("123456");
         return updated;
     }
 
